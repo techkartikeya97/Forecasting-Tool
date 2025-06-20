@@ -47,11 +47,32 @@ elif page == "Data Upload & Analysis":
 
     upload_method = st.radio("Select Upload Method", ["Upload Excel File", "Paste Google Sheet Link"])
 
+    if upload_method=="Paste Google Sheet Link":
+        st.markdown(
+        "<h3 style='text-align: left; color: grey;'>Please ensure your Google Sheet is set to public before copying and pasting the link.</h3>",
+        unsafe_allow_html=True
+                    )
+
     if upload_method == "Upload Excel File":
-        uploaded_file = st.file_uploader("Upload Excel file", type="xlsx")
-        if uploaded_file:
-            df = pd.read_excel(uploaded_file)
+        uploaded_file = st.file_uploader("Upload CSV or Excel file", type=["csv", "xlsx"])
+
+        if uploaded_file is not None:
+            # Get file name AFTER confirming the file is uploaded
+            file_name = uploaded_file.name
+
+            if file_name.endswith('.csv'):
+                df = pd.read_csv(uploaded_file)
+            elif file_name.endswith('.xlsx'):
+                df = pd.read_excel(uploaded_file)
+            else:
+                st.error("Unsupported file type!")
+
+            # Save to session state
             st.session_state.data = df
+
+            # Show preview
+            st.write("Uploaded Data:")
+            st.dataframe(df)
 
     elif upload_method == "Paste Google Sheet Link":
         gsheet_url = st.text_input("Paste Google Sheet URL")
@@ -76,7 +97,8 @@ elif page == "Data Upload & Analysis":
         st.write(df.describe())
 
         # var_to_plot = st.selectbox("Select variable to visualize", df.columns[1:])
-        var_to_plot = st.selectbox("Select variable to visualize", df.columns)
+        st.write("### Select variable to visualize")
+        var_to_plot = st.selectbox("",df.columns)
 
         fig, ax = plt.subplots(figsize=(12, 5))
         sns.lineplot(data=df, x=df.columns[0], y=var_to_plot, ax=ax)
