@@ -43,7 +43,7 @@ if page == "About":
 
 # ---------- PAGE 2: Data Upload & Summary ---------- #
 elif page == "Data Upload & Analysis":
-    st.title("📊 Data Upload & Summary")
+    st.title("📊 Data Upload & Summary :")
 
     upload_method = st.radio("Select Upload Method", ["Upload Excel File", "Paste Google Sheet Link"])
 
